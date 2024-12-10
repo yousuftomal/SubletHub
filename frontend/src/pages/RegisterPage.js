@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
-import axios from 'axios';
-import CustomModal from '../components/Modal';
+import { useDispatch, useSelector } from 'react-redux';
+import { registerUser } from '../redux/slices/userSlice';
+import { useNavigate } from 'react-router-dom';
 
 const RegisterPage = () => {
   const [formData, setFormData] = useState({
@@ -10,8 +11,11 @@ const RegisterPage = () => {
     age: '',
     occupation: '',
     profilePhoto: null,
+    password: '',
   });
-  const [modalData, setModalData] = useState({ open: false, title: '', message: '' });
+  const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const { isLoading, error } = useSelector((state) => state.user);
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -27,41 +31,25 @@ const RegisterPage = () => {
     Object.keys(formData).forEach((key) => {
       formDataToSend.append(key, formData[key]);
     });
-
-    try {
-      const response = await axios.post('/api/users/register', formDataToSend);
-      setModalData({
-        open: true,
-        title: 'Success',
-        message: 'User registered successfully!',
-      });
-    } catch (error) {
-      setModalData({
-        open: true,
-        title: 'Error',
-        message: 'Failed to register user. Please try again.',
-      });
+    const resultAction = await dispatch(registerUser(formDataToSend));
+    if (registerUser.fulfilled.match(resultAction)) {
+      navigate('/login'); // Navigate to the login page after successful registration
     }
   };
 
   return (
-    <div>
-      <form onSubmit={handleSubmit}>
-        <input type="text" name="name" placeholder="Name" onChange={handleChange} />
-        <input type="text" name="phone" placeholder="Phone" onChange={handleChange} />
-        <input type="text" name="nationalID" placeholder="National ID" onChange={handleChange} />
-        <input type="number" name="age" placeholder="Age" onChange={handleChange} />
-        <input type="text" name="occupation" placeholder="Occupation" onChange={handleChange} />
-        <input type="file" name="profilePhoto" onChange={handleFileChange} />
-        <button type="submit">Register</button>
-      </form>
-      <CustomModal
-        open={modalData.open}
-        onClose={() => setModalData({ ...modalData, open: false })}
-        title={modalData.title}
-        message={modalData.message}
-      />
-    </div>
+    <form onSubmit={handleSubmit}>
+      <h1>Register</h1>
+      <input type="text" name="name" placeholder="Name" onChange={handleChange} />
+      <input type="text" name="phone" placeholder="Phone" onChange={handleChange} />
+      <input type="text" name="nationalID" placeholder="National ID" onChange={handleChange} />
+      <input type="number" name="age" placeholder="Age" onChange={handleChange} />
+      <input type="text" name="occupation" placeholder="Occupation" onChange={handleChange} />
+      <input type="file" name="profilePhoto" onChange={handleFileChange} />
+      <input type="password" name="password" placeholder="Password" onChange={handleChange} />
+      <button type="submit" disabled={isLoading}>Register</button>
+      {error && <p>{error}</p>}
+    </form>
   );
 };
 

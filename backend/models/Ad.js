@@ -6,7 +6,7 @@ const adSchema = new mongoose.Schema({
   rent: { type: Number, required: true },
   location: { type: String, required: true },
   preferredOccupation: { type: String },
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
+  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true }, // Ensure the user reference
   createdAt: { type: Date, default: Date.now },
 });
 

@@ -1,46 +1,44 @@
-// src/pages/ProfilePage.js
 import React, { useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
-import { fetchUser, selectUser, selectUserLoading, selectUserError } from '../redux/slices/userSlice';
+import { useSelector, useDispatch } from 'react-redux';
+import { fetchUser } from '../redux/slices/userSlice';
 
-const ProfilePage = ({ userId }) => {
+const ProfilePage = () => {
   const dispatch = useDispatch();
+  const { user, isLoading, error } = useSelector((state) => state.user);
+  const userId = localStorage.getItem('userId');
 
-  // Access Redux state
-  const user = useSelector(selectUser);
-  const isLoading = useSelector(selectUserLoading);
-  const error = useSelector(selectUserError);
-
-  // Fetch user when component mounts
   useEffect(() => {
-    if (userId) {
-      dispatch(fetchUser(userId));
-    }
-  }, [dispatch, userId]);
+    const userId = localStorage.getItem('userId'); // Replace with actual user ID
+    dispatch(fetchUser(userId));
+  }, [dispatch]);
 
-  // Render loading state
-  if (isLoading) {
-    return <p>Loading user data...</p>;
-  }
+  if (isLoading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
-  // Render error state
-  if (error) {
-    return <p>Error: {error}</p>;
-  }
-
-  // Render the user profile
   return (
     <div>
-      <h1>Profile Page</h1>
       {user ? (
-        <div>
-          <h2>{user.name}'s Profile</h2>
-          <p>Email: {user.email}</p>
-          <p>Username: {user.username}</p>
-          {/* Add more user info fields here */}
-        </div>
+        <>
+          <h1>{user.name}'s Profile</h1>
+          <p>Phone: {user.phone}</p>
+          <p>Age: {user.age}</p>
+          <p>Occupation: {user.occupation}</p>
+          <h2>Your Ads</h2>
+          <ul>
+            {user.ads && user.ads.length > 0 ? (
+              user.ads.map((ad) => (
+                <li key={ad._id}>
+                  <h3>{ad.title}</h3>
+                  <p>{ad.description}</p>
+                </li>
+              ))
+            ) : (
+              <p>No ads posted yet.</p>
+            )}
+          </ul>
+        </>
       ) : (
-        <p>No user found</p>
+        <p>User not found.</p>
       )}
     </div>
   );
