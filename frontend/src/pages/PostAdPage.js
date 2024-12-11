@@ -13,6 +13,7 @@ const PostAdPage = () => {
       alert('Ad Posted!');
     } catch (error) {
       alert('Error posting ad');
+      console.error('Ad submission error:', error);
     }
   };
 

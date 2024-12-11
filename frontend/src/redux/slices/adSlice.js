@@ -1,6 +1,11 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 import axios from 'axios';
 
+export const fetchAds = createAsyncThunk('ads/fetchAds', async () => {
+  const response = await axios.get('http://localhost:5000/api/ads');
+  return response.data;
+});
+
 export const postAd = createAsyncThunk('ads/postAd', async (adData, thunkAPI) => {
   try {
     const token = localStorage.getItem('token');
@@ -15,6 +20,7 @@ export const postAd = createAsyncThunk('ads/postAd', async (adData, thunkAPI) =>
     return thunkAPI.rejectWithValue(error.response.data.message);
   }
 });
+
 
 const adSlice = createSlice({
   name: 'ads',

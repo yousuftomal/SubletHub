@@ -15,7 +15,7 @@ app.use(cors()); // Use the cors middleware
 app.use(express.json());
 app.use('/uploads', express.static(path.join(__dirname, 'uploads'))); // Serve uploads directory
 app.use('/api/users', userRoutes);
-app.use('/api/ads', adRoutes);
+app.use('/api', adRoutes);
 
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
