@@ -1,4 +1,6 @@
+// controllers/adminController.js
 const Complaint = require('../models/Complaint');
+const Ad = require('../models/Ad'); // Import the Ad model
 
 // Fetch all complaints
 exports.getAllComplaints = async (req, res) => {
@@ -11,17 +13,28 @@ exports.getAllComplaints = async (req, res) => {
   }
 };
 
-// Delete a specific complaint
+// Delete a specific complaint and the associated ad
 exports.deleteComplaint = async (req, res) => {
-  const { id } = req.params;
+  const { id } = req.params; // Get the complaint ID from the request parameters
   try {
-    const deletedComplaint = await Complaint.findByIdAndDelete(id);
-    if (!deletedComplaint) {
+    // Find the complaint to get the associated ad title
+    const complaint = await Complaint.findById(id);
+    if (!complaint) {
       return res.status(404).json({ message: 'Complaint not found' });
     }
-    res.status(200).json({ message: 'Complaint deleted successfully' });
+
+    // Delete the associated ad using the accusedPostTitle
+    const deletedAd = await Ad.findOneAndDelete({ title: complaint.accusedPostTitle });
+    if (!deletedAd) {
+      console.log('Ad not found for deletion');
+    }
+
+    // Now delete the complaint
+    await Complaint.findByIdAndDelete(id);
+    
+    res.status(200).json({ message: 'Complaint and associated ad deleted successfully' });
   } catch (error) {
-    console.error('Error deleting complaint:', error);
+    console.error('Error deleting complaint and ad:', error);
     res.status(500).json({ message: error.message });
   }
 };

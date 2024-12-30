@@ -49,7 +49,7 @@ exports.loginUser = async (req, res) => {
     }
 
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token, user: { id: user._id, name: user.name, role: user.role } });
+    res.json({ token, user: { id: user._id, name: user.name, role: user.role, isAdmin: user.isAdmin } });
   } catch (error) {
     console.error('Error logging in user:', error); // Log the error for debugging
     res.status(500).json({ message: error.message });
@@ -66,6 +66,41 @@ exports.getUserById = async (req, res) => {
     res.json(user);
   } catch (error) {
     console.error('Error fetching user:', error); // Log the error for debugging
+    res.status(500).json({ message: error.message });
+  }
+};
+
+exports.getCurrentUser = async (req, res) => {
+    try {
+        const userId = req.user.id; // Assuming req.user is set by the auth middleware
+        const user = await User.findById(userId);
+        if (!user) return res.status(404).json({ message: 'User not found' });
+        res.json(user);
+    } catch (error) {
+        console.error('Error fetching current user:', error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
+// Update user profile
+exports.updateUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { name, phone, age, occupation } = req.body;
+
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { name, phone, age, occupation },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.json(updatedUser);
+  } catch (error) {
+    console.error('Error updating user:', error);
     res.status(500).json({ message: error.message });
   }
 };

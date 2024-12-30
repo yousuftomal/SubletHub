@@ -6,27 +6,43 @@ const AdminPage = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  useEffect(() => {
-    const fetchComplaints = async () => {
-      setLoading(true);
-      try {
-        const response = await axios.get('http://localhost:5000/api/admin/complaints');
-        setComplaints(response.data);
-      } catch (err) {
-        setError('Error fetching complaints');
-      } finally {
-        setLoading(false);
-      }
-    };
+  // Function to fetch complaints from the server
+  const fetchComplaints = async () => {
+    setLoading(true);
+    try {
+      const token = localStorage.getItem('token'); // Get the token from local storage
+      const response = await axios.get('http://localhost:5000/api/admin/complaints', {
+        headers: {
+          Authorization: `Bearer ${token}` // Set the token in the Authorization header
+        }
+      });
+      setComplaints(response.data); // Set the complaints data
+    } catch (err) {
+      console.error('Error fetching complaints:', err); // Log the error for debugging
+      setError('Error fetching complaints');
+    } finally {
+      setLoading(false);
+    }
+  };
 
+  // Call fetchComplaints when the component mounts
+  useEffect(() => {
     fetchComplaints();
   }, []);
 
-  const handleDelete = async (id) => {
+  // Function to handle deleting a complaint
+  const handleDeleteComplaint = async (id) => {
     try {
-      await axios.delete(`http://localhost:5000/api/admin/complaints/delete/${id}`);
-      setComplaints(complaints.filter(complaint => complaint._id !== id));
+      const token = localStorage.getItem('token'); // Get the token from local storage
+      await axios.delete(`http://localhost:5000/api/admin/complaints/delete/${id}`, {
+        headers: {
+          Authorization: `Bearer ${token}` // Set the token in the Authorization header
+        }
+      });
+      // Update the state to remove the deleted complaint from the list
+      setComplaints(complaints.filter(complaint => complaint._id !== id)); // Remove the deleted complaint from the state
     } catch (err) {
+      console.error('Error deleting complaint:', err); // Log the error for debugging
       setError('Error deleting complaint');
     }
   };
@@ -52,7 +68,7 @@ const AdminPage = () => {
               <td>{complaint.complaintText}</td>
               <td>{new Date(complaint.createdAt).toLocaleString()}</td>
               <td>
-                <button onClick={() => handleDelete(complaint._id)}>Delete</button>
+                <button onClick={() => handleDeleteComplaint(complaint._id)}>Delete</button>
               </td>
             </tr>
           ))}

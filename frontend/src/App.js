@@ -11,6 +11,8 @@ import PostAdPage from './pages/PostAdPage';
 import ProfilePage from './pages/ProfilePage';
 import SearchPage from './pages/SearchPage';
 import SearchSublets from './components/SearchSublet';
+import EditAdPage from './components/EditAdPage';
+import EditProfilePage from './components/EditProfilePage';
 import { useSelector } from 'react-redux';
 import './App.css';
 
@@ -28,10 +30,12 @@ const App = () => {
         <Route path="/search-sublets" element={<SearchSublets />} />
         <Route path="/complaint" element={<ComplaintPage />} />
         <Route path="/post-ad" element={user ? <PostAdPage /> : <Navigate to="/login" />} />
+        <Route path="/edit-ad/:id" element={user ? <EditAdPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
+        <Route path="/edit-profile" element={user ? <EditProfilePage /> : <Navigate to="/login" />} />
         <Route
           path="/admin"
-          element={user && user.isAdmin === true ? <AdminPage /> : <Navigate to="/login" />}
+          element={user && user.isAdmin ? <AdminPage /> : <Navigate to="/login" />}
         />
         <Route
           path="/admin/complaints"

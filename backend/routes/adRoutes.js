@@ -6,7 +6,8 @@ const {
   postAd, 
   fetchAdById, 
   updateAd,
-  searchAds 
+  searchAds,
+  deleteAd 
 } = require('../controllers/adController');
 const { auth } = require('../middleware/authMiddleware');
 
@@ -19,5 +20,7 @@ router.get('/:id', fetchAdById);
 router.post('/', auth, postAd);
 router.put('/:id', auth, updateAd);
 router.get('/', fetchAds);
+router.delete('/delete/:id', auth, deleteAd); // Delete an ad by ID
+
 
 module.exports = router;

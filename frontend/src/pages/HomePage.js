@@ -60,7 +60,10 @@ const HomePage = () => {
 
   // Handle navigation
   const handleNavigation = (path) => {
-    if (user) {
+    console.log('Navigating to:', path);
+    console.log('User  state:', user);
+    console.log('Is Admin:', user.isAdmin); // Check if user is admin
+    if (user && user.isAdmin) {
       navigate(path);
     } else {
       navigate('/login');

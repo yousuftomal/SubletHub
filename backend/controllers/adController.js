@@ -136,3 +136,18 @@ exports.updateAd = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+
+// Delete an ad by ID
+exports.deleteAd = async (req, res) => {
+  const { id } = req.params; // Get the ad ID from the request parameters
+  try {
+    const deletedAd = await Ad.findByIdAndDelete(id); // Delete the ad by ID
+    if (!deletedAd) {
+      return res.status(404).json({ message: 'Ad not found' });
+    }
+    res.status(200).json({ message: 'Ad deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting ad:', error);
+    res.status(500).json({ message: error.message });
+  }
+};
