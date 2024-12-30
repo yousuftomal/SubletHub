@@ -10,8 +10,8 @@ const userSchema = new mongoose.Schema({
   occupation: { type: String },
   password: { type: String, required: true },
   role: { type: String, default: 'user' },
-  ads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ad' }] // Ensure the relationship is defined
-
+  ads: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Ad' }], // Ensure the relationship is defined
+  isAdmin: { type: Boolean, default: false }
 });
 
 userSchema.pre('save', async function (next) {

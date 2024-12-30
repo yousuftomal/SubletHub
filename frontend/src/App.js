@@ -4,9 +4,13 @@ import HomePage from './pages/HomePage';
 import LoginPage from './pages/LoginPage';
 import RegisterPage from './pages/RegisterPage';
 import AdminPage from './pages/AdminPage';
+import ComplaintPage from './pages/ComplainPage'; // Updated to match file
+import ComplaintListPage from './pages/ComplaintListPage'; // Matches updated name
 import AdPage from './pages/AdPage';
 import PostAdPage from './pages/PostAdPage';
 import ProfilePage from './pages/ProfilePage';
+import SearchPage from './pages/SearchPage';
+import SearchSublets from './components/SearchSublet';
 import { useSelector } from 'react-redux';
 import './App.css';
 
@@ -20,9 +24,19 @@ const App = () => {
         <Route path="/login" element={user ? <Navigate to="/" /> : <LoginPage />} />
         <Route path="/register" element={user ? <Navigate to="/" /> : <RegisterPage />} />
         <Route path="/ads" element={<AdPage />} />
+        <Route path="/search" element={<SearchPage />} />
+        <Route path="/search-sublets" element={<SearchSublets />} />
+        <Route path="/complaint" element={<ComplaintPage />} />
         <Route path="/post-ad" element={user ? <PostAdPage /> : <Navigate to="/login" />} />
         <Route path="/profile" element={user ? <ProfilePage /> : <Navigate to="/login" />} />
-        <Route path="/admin" element={user && user.role === 'admin' ? <AdminPage /> : <Navigate to="/login" />} />
+        <Route
+          path="/admin"
+          element={user && user.isAdmin === true ? <AdminPage /> : <Navigate to="/login" />}
+        />
+        <Route
+          path="/admin/complaints"
+          element={user && user.isAdmin === true ? <ComplaintListPage /> : <Navigate to="/login" />}
+        />
       </Routes>
     </Router>
   );

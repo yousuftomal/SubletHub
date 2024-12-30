@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector, useDispatch } from 'react-redux';
 import { fetchAds } from '../redux/slices/adSlice';
-import { fetchUser  } from '../redux/slices/userSlice';
+import { fetchUser } from '../redux/slices/userSlice';
 import { useNavigate } from 'react-router-dom'; // Import for navigation
 import axios from 'axios';
 
@@ -13,8 +13,6 @@ const HomePage = () => {
   const [recommendedAds, setRecommendedAds] = useState([]);
   const [searchCriteria, setSearchCriteria] = useState(''); // State for search input
   const [searchResults, setSearchResults] = useState([]); // State for search results
-  const [searchLocation, setSearchLocation] = useState(''); // Renamed from location
-  const [occupation, setOccupation] = useState('');
 
   // Fetch all ads when the component loads
   useEffect(() => {
@@ -26,7 +24,7 @@ const HomePage = () => {
   // Fetch recommended ads based on user's occupation
   useEffect(() => {
     if (user) {
-      dispatch(fetchUser (user.id)).then((result) => {
+      dispatch(fetchUser(user.id)).then((result) => {
         const userData = result.payload;
         if (userData) {
           const fetchRecommendedAds = async () => {
@@ -68,27 +66,23 @@ const HomePage = () => {
   };
 
   // Handle search functionality
-  const handleSearch = async (e) => {
-    e.preventDefault();
+  const handleSearch = async () => {
     try {
-      const response = await axios.get("http://localhost:5000/api/ads/search", {
-        params: {
-          keyword: searchCriteria,
-          location: searchLocation,
-          occupation: occupation,
-        }
+      const response = await axios.get('http://localhost:5000/api/ads/search', {
+        params: { searchQuery: searchCriteria }, // Send search input as query parameter
       });
-      setSearchResults(response.data);
+      setSearchResults(response.data); // Update search results state
     } catch (error) {
-      console.error('Search error:', error);
+      console.error('Error fetching search results:', error);
     }
   };
+
   // Handle complaint navigation
   const handleComplaint = () => {
     if (user) {
-      navigate('/complaint');
+      navigate('/complaint'); // Navigate to the complaint page
     } else {
-      navigate('/login');
+      navigate('/login'); // Redirect to login if user is not logged in
     }
   };
 
@@ -100,7 +94,7 @@ const HomePage = () => {
           <>
             <button onClick={() => handleNavigation('/profile')}>Profile</button>
             <button onClick={() => handleNavigation('/post-ad')}>Post Ad</button>
-            <button onClick={handleComplaint}>Complaint</button>
+            <button onClick={handleComplaint}>Complaint</button> {/* Add Complaint Button */}
             <button onClick={() => handleNavigation('/admin')}>Admin</button>
           </>
         ) : (
@@ -114,68 +108,54 @@ const HomePage = () => {
       {user ? (
         <>
           {/* Search bar and button */}
-          <form onSubmit={handleSearch} className="search-section">
+          <div className="search-section">
             <input
               type="text"
               placeholder="Search ads..."
               value={searchCriteria}
-              onChange={(e) => setSearchCriteria(e.target.value)}
+              onChange={(e) => setSearchCriteria(e.target.value)} // Update search input state
             />
-            
-            <button type="submit">Search</button>
-          </form>
+            <button onClick={handleSearch}>Search</button>
+          </div>
 
           {/* Display search results */}
-          <div className="search-results">
-            {searchResults.length > 0 ? (
-              searchResults.map((ad) => (
-                <div key={ad.id} className="ad-card">
-                  <h3>{ad.title}</h3>
-                  <p>{ad.description}</p>
-                  <p>Rent: ${ad.rent}</p>
-                  <p>Location: {ad.location}</p>
-                </div>
-              ))
-            ) : (
-              <p>No results found.</p>
-            )}
-          </div>
+          {searchResults.length > 0 && (
+            <div>
+              <h2>Search Results</h2>
+              <ul>
+                {searchResults.map((ad) => (
+                  <li key={ad._id}>
+                    <h3>{ad.title}</h3>
+                    <p>{ad.description}</p>
+                    <p>Rent: {ad.rent}</p>
+                    <p>Location: {ad.location}</p>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
 
-          {/* Display recommended ads */}
-          <div className="recommended-ads">
-            <h2>Recommended Ads for You</h2>
-            {recommendedAds.length > 0 ? (
-              recommendedAds.map((ad) => (
-                <div key={ad.id} className="ad-card">
-                  <h3>{ad.title}</h3>
-                  <p>{ad.description}</p>
-                  <p>Rent: ${ad.rent}</p>
-                  <p>Location: {ad.location}</p>
-                </div>
-              ))
-            ) : (
-              <p>No recommended ads available.</p>
-            )}
-          </div>
-          
-          <div className="recommended-ads">
-            <h2>Recent Ads for You</h2>
-            {ads.length > 0 ? (
-              recommendedAds.map((ad) => (
-                <div key={ad.id} className="ad-card">
-                  <h3>{ad.title}</h3>
-                  <p>{ad.description}</p>
-                  <p>Rent: ${ad.rent}</p>
-                  <p>Location: {ad.location}</p>
-                </div>
-              ))
-            ) : (
-              <p>No recommended ads available.</p>
-            )}
-          </div>
+          <h2>Recommendations</h2>
+          <ul>
+            {recommendedAds.map((ad) => (
+              <li key={ad._id}>
+                <h3>{ad.title}</h3>
+                <p>{ad.description}</p>
+              </li>
+            ))}
+          </ul>
+          <h2>Recent Ads</h2>
+          <ul>
+            {ads.map((ad) => (
+              <li key={ad._id}>
+                <h3>{ad.title}</h3>
+                <p>{ad.description}</p>
+              </li>
+            ))}
+          </ul>
         </>
       ) : (
-        <p>Please log in to view ads and make searches.</p>
+        <p>Please log in to view recommendations and recent ads.</p>
       )}
     </div>
   );

@@ -49,8 +49,10 @@ nav a {
   transition: color 0.3s;
 }
 
-nav a:hover {
+nav a:hover,
+nav a:focus {
   color: #ffdd57;
+  outline: none;
 }
 
 /* Content Styles */
@@ -79,7 +81,7 @@ form {
   margin: 0 auto;
 }
 
-input, button {
+input, button, select {
   width: 100%;
   padding: 15px;
   border: 1px solid #ddd;
@@ -89,7 +91,8 @@ input, button {
   transition: all 0.3s;
 }
 
-input:focus {
+input:focus,
+select:focus {
   border-color: #007bff;
   box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
 }
@@ -111,6 +114,73 @@ button:disabled {
   background-color: #ddd;
   cursor: not-allowed;
 }
+
+/* Search Bar Styles */
+
+.search-bar {
+  display: flex;
+  gap: 10px;
+  max-width: 600px;
+  margin: 20px auto;
+}
+
+.search-bar input {
+  flex: 1;
+  border: 1px solid #ccc;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-size: 1rem;
+}
+
+.search-bar button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.search-bar button:hover {
+  background-color: #0056b3;
+}
+
+/* Utility Classes */
+
+.btn-primary {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-primary:hover {
+  background-color: #0056b3;
+}
+
+.btn-secondary {
+  background-color: #6c757d;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.btn-secondary:hover {
+  background-color: #5a6268;
+}
+
+.text-center {
+  text-align: center;
+}
+
+/* Error Message */
 
 .error {
   color: #dc3545;
@@ -158,6 +228,15 @@ footer {
   input, button {
     font-size: 0.9rem;
   }
+
+  .search-bar {
+    flex-direction: column;
+  }
+
+  .search-bar input, .search-bar button {
+    width: 100%;
+    margin-bottom: 10px;
+  }
 }
 
 @media (max-width: 480px) {
@@ -171,5 +250,9 @@ footer {
 
   nav a {
     margin: 5px 0;
+  }
+
+  .search-bar {
+    gap: 5px;
   }
 }
